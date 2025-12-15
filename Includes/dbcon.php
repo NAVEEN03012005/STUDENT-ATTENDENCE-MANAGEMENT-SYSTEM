@@ -12,10 +12,11 @@ if (session_status() === PHP_SESSION_NONE) {
 	header('X-XSS-Protection: 1; mode=block');
 	header('X-Content-Type-Options: nosniff');
 
-	$host = "localhost";
-	$user = "root";
-	$pass = "";
-	$db = "attendancesystem";
+	// Database configuration - supports both local and Docker environments
+	$host = getenv('MYSQL_HOST') ?: "localhost";
+	$user = getenv('MYSQL_USER') ?: "root";
+	$pass = getenv('MYSQL_PASSWORD') ?: "";
+	$db = getenv('MYSQL_DATABASE') ?: "attendancesystem";
 	
 	try {
 		$conn = new mysqli($host, $user, $pass, $db);

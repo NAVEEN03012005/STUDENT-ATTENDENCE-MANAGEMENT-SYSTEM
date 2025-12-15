@@ -1,0 +1,61 @@
+version: '3.8'
+
+services:
+  # PHP Apache Web Server
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.php
+    container_name: student_attendance_web
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+    environment:
+      - MYSQL_HOST=db
+      - MYSQL_USER=attendance_user
+      - MYSQL_PASSWORD=attendance_password
+      - MYSQL_DATABASE=attendancesystem
+    networks:
+      - attendance_network
+
+  # MySQL Database Server
+  db:
+    image: mysql:8.0
+    container_name: student_attendance_db
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: attendancesystem
+      MYSQL_USER: attendance_user
+      MYSQL_PASSWORD: attendance_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./DATABASE\ FILE/attendancesystem.sql:/docker-entrypoint-initdb.d/attendancesystem.sql
+    networks:
+      - attendance_network
+
+  # PHPMyAdmin for database management
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: student_attendance_phpmyadmin
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root_password
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    networks:
+      - attendance_network
+
+volumes:
+  db_data:
+
+networks:
+  attendance_network:
+    driver: bridge
