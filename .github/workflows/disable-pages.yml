@@ -1,0 +1,23 @@
+# This workflow prevents automatic GitHub Pages deployment
+# This is a Docker application, not a static website
+
+name: Disable Pages
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  prevent-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Info
+        run: |
+          echo "This is a Docker application."
+          echo "GitHub Pages deployment is disabled."
+          echo "Deploy using: docker-compose -f docker-compose.deploy.yml up -d"
